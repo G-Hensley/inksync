@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String          @id @default(cuid())
+  email     String          @unique
+  role      GlobalRole      @default(USER)
+  memberships BoardMember[]
+  comments   Comment[]
+}
+
+model Board {
+  id        String        @id @default(cuid())
+  name      String
+  layers    Layer[]
+  shapes    Shape[]
+  comments  Comment[]
+  members   BoardMember[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model BoardMember {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  board     Board   @relation(fields: [boardId], references: [id])
+  boardId   String
+  role      BoardRole @default(EDITOR)
+
+  @@id([userId, boardId])
+  @@index([boardId])
+}
+
+model Layer {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int
+  board     Board    @relation(fields: [boardId], references: [id])
+  boardId   String
+  shapes    Shape[]
+}
+
+model Shape {
+  id        String     @id @default(cuid())
+  kind      ShapeKind
+  x         Float
+  y         Float
+  width     Float?
+  height    Float?
+  rotation  Float      @default(0)
+  zIndex    Int        @default(0)
+  props     Json       // color, stroke, path, text, etc.
+  layer     Layer      @relation(fields: [layerId], references: [id])
+  layerId   String
+  board     Board      @relation(fields: [boardId], references: [id])
+  boardId   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  board     Board    @relation(fields: [boardId], references: [id])
+  boardId   String
+  createdAt DateTime @default(now())
+}
+
+enum GlobalRole { 
+  USER 
+  ADMIN 
+}
+enum BoardRole  { 
+  OWNER 
+  ADMIN 
+  EDITOR 
+  VIEWER 
+}
+enum ShapeKind  { 
+  RECT 
+  ELLIPSE 
+  LINE 
+  TEXT 
+  IMAGE 
+  FREEHAND 
+}
