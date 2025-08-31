@@ -6,11 +6,12 @@ export const prisma = new PrismaClient();
 
 export type Context = {
   prisma: PrismaClient
-  userId?: string
-  role?: 'USER' | 'ADMIN'
+  userId: string | undefined
+  role: 'USER' | 'ADMIN' | undefined
+  request: IncomingMessage
 }
 
-export function createContext({ request }: { request: IncomingMessage }): Context {
+export function createContext({ request }: { request: IncomingMessage }) {
   const auth = request.headers.authorization || ''
   let userId: string | undefined
   let role: 'USER' | 'ADMIN' | undefined
@@ -23,5 +24,5 @@ export function createContext({ request }: { request: IncomingMessage }): Contex
       role = r ?? 'USER'
     } catch {}
   }
-  return { prisma, userId, role } as Context
+  return { prisma, userId, role, request }
 }
