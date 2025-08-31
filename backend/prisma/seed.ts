@@ -22,7 +22,7 @@ async function run() {
       kind: 'RECT',
       x: 100, y: 80, width: 200, height: 120, zIndex: 1,
       props: { fill: '#cccccc', stroke: '#333333' },
-      layerId: board.layers[1].id,
+      layerId: board.layers[1]?.id ?? '',
       boardId: board.id
     }
   })

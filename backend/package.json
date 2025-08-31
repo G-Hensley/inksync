@@ -6,7 +6,7 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "ts-node-dev --transpile-only prisma/seed.ts"
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "graphql-subscriptions": "^3.0.0",
     "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
+    "ts-node": "^10.9.2",
     "zod": "^4.1.5"
   },
   "devDependencies": {
